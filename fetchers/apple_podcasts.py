@@ -5,8 +5,10 @@ import time
 
 try:
     from fetchers.config import DEV_KEYWORDS
+    from fetchers.utils.user_agents import get_random_user_agent
 except ModuleNotFoundError:
     from config import DEV_KEYWORDS
+    from utils.user_agents import get_random_user_agent
 
 def scrape_apple_podcasts(query, category):
     results = []
@@ -20,7 +22,8 @@ def scrape_apple_podcasts(query, category):
     }
     
     try:
-        response = requests.get(search_url, params=params, timeout=10)
+        headers = {"User-Agent": get_random_user_agent()}
+        response = requests.get(search_url, params=params, headers=headers, timeout=10)
         if response.status_code == 200:
             data = response.json()
             shows = data.get("results", [])
