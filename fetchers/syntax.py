@@ -1,7 +1,7 @@
-import requests
 from bs4 import BeautifulSoup
 import json
 import urllib.parse
+from retry import get_with_backoff
 
 try:
     from fetchers.utils.user_agents import get_random_user_agent
@@ -13,7 +13,7 @@ def fetch_syntax_episodes():
     headers = {
         'User-Agent': get_random_user_agent()
     }
-    response = requests.get(url, headers=headers, timeout=10)
+    response = get_with_backoff(url, headers=headers, timeout=10)
     response.raise_for_status()
     soup = BeautifulSoup(response.content, 'html.parser')
 
@@ -24,7 +24,7 @@ def fetch_syntax_episodes():
         page_url = f"{url}/shows?page={page}"
         print(f"Fetching {page_url}...")
         
-        response = requests.get(page_url, headers=headers, timeout=10)
+        response = get_with_backoff(page_url, headers=headers, timeout=10)
         if response.status_code != 200:
             break
             

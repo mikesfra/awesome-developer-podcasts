@@ -1,7 +1,7 @@
 import json
 import re
-import requests
 from bs4 import BeautifulSoup
+from retry import get_with_backoff
 
 try:
     from fetchers.utils.user_agents import get_random_user_agent
@@ -12,7 +12,7 @@ def fetch_cloudways_podcasts():
     # Use archive.org to bypass Cloudflare protection
     url = "http://web.archive.org/web/20230601000000/https://www.cloudways.com/blog/best-coding-podcasts/"
     
-    response = requests.get(url, headers={'User-Agent': get_random_user_agent()}, timeout=10)
+    response = get_with_backoff(url, headers={'User-Agent': get_random_user_agent()}, timeout=10)
     response.raise_for_status()
     soup = BeautifulSoup(response.content, "html.parser")
     
